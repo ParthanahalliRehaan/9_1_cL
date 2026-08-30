@@ -1,0 +1,40 @@
+## `llm-stack` — human-gated model orchestration repo (v1: chat + image)
+
+**Goal:** Catalog and orchestrate the best *locally-runnable* models for chat and image generation, constrained to a single **NVIDIA RTX 4050 laptop, 6GB VRAM**, with a human-in-the-loop orchestrating agent.
+
+### Hardware constraint (drives every model choice below)
+- 6GB VRAM, laptop-class GPU — no two models resident simultaneously
+- Orchestrator loads/unloads models on demand per stage (pool-manager pattern, or delegate to a runtime that already does this, e.g. Ollama's idle-eviction)
+
+### Pipeline architecture
+Human-gated state machine, not autonomous chaining:
+
+```
+User request
+  → Agent runs a stage
+  → Agent surfaces result to user
+  → User approves → Agent runs next stage
+  → User rejects  → [OPEN: retry same input / retry with feedback / manual edit — pick one]
+```
+
+### Modules
+
+1. **Chat — Planning**
+   - Sub-task: generate a learning plan for a given topic
+   - Sub-task: validate/critique a given plan, return corrected version
+   - `[OPEN: success metric — how do you judge a plan is "correct"?]`
+
+2. **Text model A → Image model B**
+   - A: system-prompted to specialize in writing image-generation prompts (per style: pixel art, representational art, 3D-render-style, ASCII art, others)
+   - B: renders A's output
+   - `[OPEN: exact output schema A must produce — matching B's expected prompt format]`
+
+3. **Orchestrating agent**
+   - Runs the state machine above
+   - Loads/unloads models per stage within the 6GB budget
+   - Logs, per stage: `{stage_id, session_id, timestamp, output, approved: bool, attempt_number}`
+   - `[OPEN: storage format/location — session-keyed files, not one append-only diary]`
+
+### Out of scope (for now)
+Video, voice — cut to keep v1 shippable. Add back as new modules once chat+image pipeline actually runs end-to-end.
+Daily Hogwarts/Tomb Raider facts and game reminders — build as a separate consumer of this orchestrator's API later.
