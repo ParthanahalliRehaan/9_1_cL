@@ -1,0 +1,4 @@
+Codex Vs Claude code Vs Kimi Code?, None build own Lucifer with local models implementing AirLLM. In UI, give options Over-night Or Urgent for Over-night use AirLLM but for Urgent use as given in the plan.
+Cursor Setup like MCP,etc. Whats cursor 3.0, 2.0 ?
+Whats NVIDIA Cuda?, Allows custom processes to use GPU, as CPU is defaultly used!
+Whats harness engineering, loop engineering ?
